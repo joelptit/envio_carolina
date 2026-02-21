@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculo Taxs Flexible</title>
+    <title>Calc Taxes Pro</title>
     <style>
         :root {
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --text: #0f172a;
-            --border: #e2e8f0;
-            --primary: #3b82f6;
-        }
-
-        [data-theme="dark"] {
+            /* Colores por defecto (Oscuro) */
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f1f5f9;
             --border: #334155;
             --primary: #60a5fa;
+            --accent: #10b981;
+        }
+
+        [data-theme="light"] {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
+            --primary: #3b82f6;
         }
 
         body {
@@ -29,16 +31,17 @@
             display: flex;
             justify-content: center;
             padding: 20px;
-            transition: background 0.3s;
+            transition: background 0.3s ease;
         }
 
         .container {
             width: 100%;
-            max-width: 450px;
+            max-width: 400px; /* Tamaño fijo para consistencia estilo app */
             background: var(--card);
             padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            box-sizing: border-box; /* Evita que el padding empuje los elementos afuera */
         }
 
         .header {
@@ -49,159 +52,116 @@
         }
 
         .theme-btn {
-            background: none;
+            background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 8px 14px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            transition: all 0.2s;
         }
 
-        .main-input {
+        .main-input-wrapper {
+            width: 100%;
             margin-bottom: 20px;
         }
 
-        .main-input label {
+        .main-input-wrapper label {
             display: block;
             font-size: 0.9rem;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            color: var(--primary);
             font-weight: 600;
         }
 
-        .main-input input {
+        input {
             width: 100%;
-            padding: 12px;
-            font-size: 1.5rem;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            background: var(--card);
+            box-sizing: border-box; /* Crucial para que no sobresalga */
+            background: var(--bg);
             color: var(--text);
+            border: 2px solid var(--border);
+            border-radius: 12px;
             outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #monto {
+            padding: 16px;
+            font-size: 1.8rem;
+            font-weight: bold;
             text-align: center;
+        }
+
+        input:focus {
+            border-color: var(--primary);
         }
 
         .config-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 25px;
         }
 
         .config-item label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 5px;
         }
 
         .config-item input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--card);
-            color: var(--text);
+            padding: 10px;
+            font-size: 1rem;
+            text-align: center;
         }
 
         .results {
-            border-top: 2px dashed var(--border);
+            border-top: 1px solid var(--border);
             padding-top: 20px;
         }
 
         .result-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 1rem;
         }
 
         .total-row {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--primary);
+            margin-top: 10px;
+            padding: 18px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 14px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.4rem;
         }
+
+        .symbol { font-size: 0.9rem; margin-right: 2px; opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h2 style="margin:0">Calculadora</h2>
-        <button class="theme-btn" id="theme-toggle">🌙 Modo</button>
+        <h3 style="margin:0">Calculadora V2</h3>
+        <button class="theme-btn" id="theme-toggle">☀️ Cambiar Tema</button>
     </div>
 
-    <div class="main-input">
-        <label>Monto Base ($)</label>
+    <div class="main-input-wrapper">
+        <label for="monto">MONTO BASE</label>
         <input type="number" id="monto" placeholder="0.00" step="0.01">
     </div>
 
     <div class="config-grid">
         <div class="config-item">
-            <label>Comisión BDV (%)</label>
+            <label>BDV %</label>
             <input type="number" id="pct-bdv" value="7.5" step="0.1">
         </div>
         <div class="config-item">
-            <label>Comisión PayPal (%)</label>
-            <input type="number" id="pct-paypal" value="4.5" step="0.1">
-        </div>
-    </div>
-
-    <div class="results">
-        <div class="result-row">
-            <span>Comisión BDV:</span>
-            <span id="res-bdv">$0.00</span>
-        </div>
-        <div class="result-row">
-            <span>Comisión PayPal:</span>
-            <span id="res-paypal">$0.00</span>
-        </div>
-        <div class="result-row total-row">
-            <span>Monto Final:</span>
-            <span id="res-total">$0.00</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    const inputs = ['monto', 'pct-bdv', 'pct-paypal'];
-    const elements = {};
-    
-    // Inicializar referencias
-    inputs.forEach(id => elements[id] = document.getElementById(id));
-    const resBdv = document.getElementById('res-bdv');
-    const resPaypal = document.getElementById('res-paypal');
-    const resTotal = document.getElementById('res-total');
-    const themeToggle = document.getElementById('theme-toggle');
-
-    function calcular() {
-        const monto = parseFloat(elements['monto'].value) || 0;
-        const pBdv = parseFloat(elements['pct-bdv'].value) || 0;
-        const pPaypal = parseFloat(elements['pct-paypal'].value) || 0;
-
-        const valBdv = monto * (pBdv / 100);
-        const valPaypal = monto * (pPaypal / 100);
-        const total = monto + valBdv + valPaypal;
-
-        resBdv.textContent = `$${valBdv.toFixed(2)}`;
-        resPaypal.textContent = `$${valPaypal.toFixed(2)}`;
-        resTotal.textContent = `$${total.toFixed(2)}`;
-    }
-
-    // Escuchar cambios en todos los inputs
-    inputs.forEach(id => elements[id].addEventListener('input', calcular));
-
-    // Tema oscuro
-    themeToggle.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        themeToggle.textContent = isDark ? '🌙 Modo' : '☀️ Modo';
-    });
-</script>
-
-</body>
-</html>
+            <label>PayPal %</label>
+            <input type="number" id="pct-paypal" value="4.
