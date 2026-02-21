@@ -3,119 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculo de Comisiones</title>
+    <title>Calculo Taxs Flexible</title>
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --input-border: #e2e8f0;
-            --primary: #2563eb;
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --input-border: #334155;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
             --primary: #3b82f6;
         }
 
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --border: #334155;
+            --primary: #60a5fa;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            transition: all 0.3s ease;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
             display: flex;
             justify-content: center;
             padding: 20px;
-            margin: 0;
+            transition: background 0.3s;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
-            margin-top: 30px;
+            max-width: 450px;
+            background: var(--card);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 24px;
         }
 
-        /* Switch Estilo */
-        .theme-switch {
-            cursor: pointer;
+        .theme-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
             padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--input-border);
-            background: var(--card-bg);
-            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 0.8rem;
+        }
+
+        .main-input {
+            margin-bottom: 20px;
+        }
+
+        .main-input label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
-        .input-group {
-            margin-bottom: 2rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        input {
+        .main-input input {
             width: 100%;
-            padding: 14px;
-            border: 2px solid var(--input-border);
-            border-radius: 12px;
-            font-size: 1.2rem;
-            background: var(--card-bg);
-            color: var(--text-main);
-            box-sizing: border-box;
+            padding: 12px;
+            font-size: 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: var(--card);
+            color: var(--text);
             outline: none;
+            text-align: center;
         }
 
-        input:focus {
-            border-color: var(--primary);
-        }
-
-        .results-grid {
+        .config-grid {
             display: grid;
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .card {
-            background: var(--card-bg);
-            padding: 18px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        .config-item label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+        }
+
+        .config-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .results {
+            border-top: 2px dashed var(--border);
+            padding-top: 20px;
+        }
+
+        .result-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
-        .card-label {
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .card-value {
+        .total-row {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+            font-weight: bold;
             font-size: 1.2rem;
-            font-weight: 700;
+            color: var(--primary);
         }
-
-        /* Colores de acento */
-        .bdv { border-left: 5px solid #ef4444; }
-        .paypal { border-left: 5px solid #3b82f6; }
-        .total { border-left: 5px solid #10b981; background: rgba(16, 185, 129, 0.05); }
-        .total .card-value { color: #10b981; }
     </style>
 </head>
 <body>
@@ -123,62 +132,74 @@
 <div class="container">
     <div class="header">
         <h2 style="margin:0">Calculadora</h2>
-        <button class="theme-switch" id="theme-toggle">Modo Oscuro</button>
+        <button class="theme-btn" id="theme-toggle">🌙 Modo</button>
     </div>
 
-    <div class="input-group">
-        <label for="monto">Monto base</label>
+    <div class="main-input">
+        <label>Monto Base ($)</label>
         <input type="number" id="monto" placeholder="0.00" step="0.01">
     </div>
 
-    <div class="results-grid">
-        <div class="card bdv">
-            <span class="card-label">Comisión BDV (7.5%)</span>
-            <span class="card-value" id="res-bdv">$0.00</span>
+    <div class="config-grid">
+        <div class="config-item">
+            <label>Comisión BDV (%)</label>
+            <input type="number" id="pct-bdv" value="7.5" step="0.1">
         </div>
-
-        <div class="card paypal">
-            <span class="card-label">Comisión PayPal (4.5%)</span>
-            <span class="card-value" id="res-paypal">$0.00</span>
+        <div class="config-item">
+            <label>Comisión PayPal (%)</label>
+            <input type="number" id="pct-paypal" value="4.5" step="0.1">
         </div>
+    </div>
 
-        <div class="card total">
-            <span class="card-label">Monto Total</span>
-            <span class="card-value" id="res-total">$0.00</span>
+    <div class="results">
+        <div class="result-row">
+            <span>Comisión BDV:</span>
+            <span id="res-bdv">$0.00</span>
+        </div>
+        <div class="result-row">
+            <span>Comisión PayPal:</span>
+            <span id="res-paypal">$0.00</span>
+        </div>
+        <div class="result-row total-row">
+            <span>Monto Final:</span>
+            <span id="res-total">$0.00</span>
         </div>
     </div>
 </div>
 
 <script>
-    const inputMonto = document.getElementById('monto');
+    const inputs = ['monto', 'pct-bdv', 'pct-paypal'];
+    const elements = {};
+    
+    // Inicializar referencias
+    inputs.forEach(id => elements[id] = document.getElementById(id));
     const resBdv = document.getElementById('res-bdv');
     const resPaypal = document.getElementById('res-paypal');
     const resTotal = document.getElementById('res-total');
     const themeToggle = document.getElementById('theme-toggle');
 
-    // Lógica de Cálculos
-    inputMonto.addEventListener('input', () => {
-        const monto = parseFloat(inputMonto.value) || 0;
+    function calcular() {
+        const monto = parseFloat(elements['monto'].value) || 0;
+        const pBdv = parseFloat(elements['pct-bdv'].value) || 0;
+        const pPaypal = parseFloat(elements['pct-paypal'].value) || 0;
 
-        const bdv = monto * 0.075;
-        const paypal = monto * 0.045;
-        const total = monto + bdv + paypal;
+        const valBdv = monto * (pBdv / 100);
+        const valPaypal = monto * (pPaypal / 100);
+        const total = monto + valBdv + valPaypal;
 
-        resBdv.textContent = `$${bdv.toFixed(2)}`;
-        resPaypal.textContent = `$${paypal.toFixed(2)}`;
+        resBdv.textContent = `$${valBdv.toFixed(2)}`;
+        resPaypal.textContent = `$${valPaypal.toFixed(2)}`;
         resTotal.textContent = `$${total.toFixed(2)}`;
-    });
+    }
 
-    // Lógica de Modo Oscuro
+    // Escuchar cambios en todos los inputs
+    inputs.forEach(id => elements[id].addEventListener('input', calcular));
+
+    // Tema oscuro
     themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            themeToggle.textContent = 'Modo Oscuro';
-        } else {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.textContent = 'Modo Claro';
-        }
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        themeToggle.textContent = isDark ? '🌙 Modo' : '☀️ Modo';
     });
 </script>
 
